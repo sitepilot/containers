@@ -1,4 +1,4 @@
-name: php
+name: php-nginx
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: php
+name: php-ols
 
 on:
   push:

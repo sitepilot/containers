@@ -1,4 +1,4 @@
-name: php
+name: php-fpm
 
 on:
   push:
