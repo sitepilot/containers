@@ -1,7 +1,7 @@
 # Container Image Library
 
 This repository contains a collection of optimized and extensible container images for running web applications in
-production. All images are based on our [runtime](./src/runtime) image, an optimized and extensible Ubuntu 22.04 LTS
+production. All images are based on our [runtime](./src/Dockerfile#L1) image, an optimized and extensible Ubuntu 22.04 LTS
 container image.
 
 ## Usage
