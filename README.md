@@ -9,13 +9,13 @@ container image.
 The recommended way to get any of our images is to pull the prebuilt image from the GitHub Registry:
 
 ```bash
-docker pull ghcr.io/sitepilot/<image>:<tag>
+docker run ghcr.io/sitepilot/image:tag
 ```
 
 For example, if you wish to run **PHP 8.3** with **PHP-FPM** & **NGINX**, use the following image:
 
 ```bash
-ghcr.io/sitepilot/php-nginx:8.3
+docker run --rm ghcr.io/sitepilot/php-nginx:8.3
 ```
 
 ## Customization
@@ -23,8 +23,8 @@ ghcr.io/sitepilot/php-nginx:8.3
 To use an image as a base image and avoid potential breaking changes in your container builds, use the following
 image naming pattern in your `Dockerfile`:
 
-```
-FROM ghcr.io/sitepilot/<image>:<tag>-1.x
+```Dockerfile
+FROM ghcr.io/sitepilot/image:tag
 ```
 
 For example, if you wish to customize the **PHP 8.3** with **FPM** & **NGINX** image:
