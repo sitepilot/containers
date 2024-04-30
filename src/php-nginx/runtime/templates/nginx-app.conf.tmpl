@@ -1,0 +1,57 @@
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  listen 443 http2 ssl default_server;
+  listen [::]:443 http2 ssl default_server;
+
+  ssl_prefer_server_ciphers on;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+
+  ssl_certificate {{ .Env.NGINX_CERTS_DIR }}/ssl.crt;
+  ssl_certificate_key {{ .Env.NGINX_CERTS_DIR }}/ssl.key;
+
+  root {{ .Env.RUNTIME_FILES_DIR }}/{{ default .Env.NGINX_PUBLIC_DIR "" }};
+
+  index index.php index.html index.htm;
+
+  server_name _;
+
+  charset utf-8;
+
+  client_max_body_size {{ default .Env.PHP_UPLOAD_MAX_FILESIZE "100M" }};
+
+  include server.d/*.conf;
+
+  location = /favicon.ico {
+    log_not_found off;
+    access_log    off;
+  }
+
+  location = /robots.txt {
+    log_not_found off;
+    access_log    off;
+  }
+
+  location /-/ping {
+    access_log off;
+    fastcgi_read_timeout 5s;
+    include        fastcgi_params;
+    fastcgi_param  SCRIPT_NAME     /-/ping;
+    fastcgi_param  SCRIPT_FILENAME /-/ping;
+    fastcgi_pass   {{ default .Env.NGINX_FASTCGI_PASS "127.0.0.1:9000" }};
+  }
+
+  include location.d/*.conf;
+
+  location / {
+    try_files $uri $uri/ /index.php?$query_string;
+  }
+
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_param HTTPS $fastcgi_https if_not_empty;
+    fastcgi_pass {{ default .Env.NGINX_FASTCGI_PASS "127.0.0.1:9000" }};
+  }
+}

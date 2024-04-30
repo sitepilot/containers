@@ -1,0 +1,56 @@
+services:
+  runtime:
+    image: ghcr.io/sitepilot/runtime:22.04
+    profiles:
+      - donotstart
+    environment:
+      RUNTIME_VERBOSITY: 2
+    build:
+      context: ./src
+      target: runtime
+
+  php:
+    image: ghcr.io/sitepilot/php:8.3
+    profiles:
+      - donotstart
+    environment:
+      RUNTIME_VERBOSITY: 2
+    build:
+      context: ./src
+      target: php
+
+  php-fpm:
+    image: ghcr.io/sitepilot/php-fpm:8.3
+    profiles:
+      - donotstart
+    environment:
+      RUNTIME_VERBOSITY: 2
+    build:
+      context: ./src
+      target: php-fpm
+
+  php-nginx:
+    image: ghcr.io/sitepilot/php-nginx:8.3
+    profiles:
+      - donotstart
+    ports:
+      - :80
+      - :443
+    environment:
+      RUNTIME_VERBOSITY: 2
+    build:
+      context: ./src
+      target: php-nginx
+
+  php-ols:
+    image: ghcr.io/sitepilot/php-ols:8.3
+    profiles:
+      - donotstart
+    ports:
+      - :80
+      - :443
+    environment:
+      RUNTIME_VERBOSITY: 1
+    build:
+      context: ./src
+      target: php-ols

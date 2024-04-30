@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+
+function to_bool()
+{
+  if [[ $1 == 'true' || $1 == true || $1 == 1 || $1 == 'Y' || $1 == 'y' ]]; then
+    true
+  else
+    false
+  fi
+}
+
+function debug()
+{
+  if [ "$RUNTIME_VERBOSITY" -ge 2 ]; then
+    echo "✳️ $1" >&2
+  fi
+}
+
+function info()
+{
+  if [ "$RUNTIME_VERBOSITY" -ge 1 ]; then
+    echo "ℹ️ $1" >&2
+  fi
+}
+
+function warning()
+{
+  if [ "$RUNTIME_VERBOSITY" -ge 1 ]; then
+    echo "⚠️ $1" >&2
+  fi
+}
+
+function error()
+{
+    echo "‼️ $1" 1>&2
+}
+
+function throw()
+{
+  EXIT_CODE=${2:-1}
+  echo "‼️ $1" 1>&2
+  exit "$EXIT_CODE"
+}
+
+function template()
+{
+  debug "Generating $1 to $2"
+  /runtime/bin/dockerize -template "/runtime/templates/$1":"$2"
+}
+
+function generate_certs()
+{
+  if [ ! -f "$1"/ssl.key ]; then
+    debug "Generating self-signed SSL certificate to $1"
+    openssl req -x509 -subj "/C=NL/ST=Gelderland/L=Doetinchem/O=Sitepilot/CN=app.test" -nodes -newkey rsa:2048 -keyout "$1/ssl.key" -out "$1/ssl.crt" -days 365 &> /dev/null
+  fi
+}
+
+mkdir -p "$RUNTIME_FILES_DIR"
+
+for FILE in /runtime/entrypoint.d/*.sh; do
+  # shellcheck disable=SC1090
+  source "$FILE"
+done
+
+if to_bool "$RUNTIME_S6_ENABLED"; then
+  export S6_KEEP_ENV=${S6_KEEP_ENV:-1}
+  export S6_VERBOSITY=${S6_VERBOSITY:-$RUNTIME_VERBOSITY}
+  export S6_BEHAVIOUR_IF_STAGE2_FAILS=${S6_BEHAVIOUR_IF_STAGE2_FAILS:-2}
+  export S6_CMD_WAIT_FOR_SERVICES_MAXTIME=${S6_CMD_WAIT_FOR_SERVICES_MAXTIME:-0}
+  exec /init "$@"
+elif test $# -gt 0; then
+  exec "$@"
+fi
