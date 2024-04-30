@@ -1,0 +1,22 @@
+name: php
+
+on:
+  push:
+    branches:
+      - '1.x'
+    paths:
+      - 'src/php-nginx/**'
+      - '.github/workflows/php-nginx.yml'
+  workflow_dispatch:
+
+jobs:
+  php-nginx:
+    uses: ./.github/workflows/build.yml
+    strategy:
+      matrix:
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
+      fail-fast: true
+    with:
+      target: php-nginx
+      version: ${{ matrix.php }}
+    secrets: inherit
