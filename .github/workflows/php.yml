@@ -5,7 +5,7 @@ on:
     branches:
       - '1.x'
     paths:
-      - './src/php'
+      - './src/php/*'
       - './.github/workflows/php.yml'
   workflow_dispatch:
 
