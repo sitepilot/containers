@@ -5,12 +5,13 @@ on:
     branches:
       - '1.x'
     paths:
-      - "./src/php"
+      - './src/php'
+      - './.github/workflows/php.yml'
   workflow_dispatch:
 
 jobs:
   php:
-    uses: ./.github/workflows/build-image.yml
+    uses: ./.github/workflows/build.yml
     strategy:
       matrix:
         php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]

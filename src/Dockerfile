@@ -1,6 +1,3 @@
-ARG PHP_VERSION='8.3'
-ARG PHP_BASE_IMAGE="php:${PHP_VERSION}-fpm-bookworm"
-
 # --------------- [RUNTIME] --------------- #
 
 FROM ubuntu:22.04 as runtime
@@ -42,7 +39,7 @@ FROM runtime as php
 
 USER root
 
-ARG PHP_VERSION=8.3
+ARG BUILD_VERSION=8.3
 
 ENV RUNTIME_VERBOSITY=0
 
@@ -51,8 +48,8 @@ COPY --chmod=755 ./php /
 RUN /runtime/bin/install gnupg2 software-properties-common less msmtp unzip \
     && add-apt-repository ppa:ondrej/php \
     && mkdir -p /etc/php/current \
-    && ln -sf /etc/php/current /etc/php/${PHP_VERSION} \
-    && /runtime/bin/install $(cat /packages/php-${PHP_VERSION}.txt) \
+    && ln -sf /etc/php/current /etc/php/${BUILD_VERSION} \
+    && /runtime/bin/install $(cat /packages/php-${BUILD_VERSION}.txt) \
     && /runtime/bin/rchown /etc/php/current \
     && rm -rf /packages
 
@@ -70,8 +67,8 @@ USER root
 
 ENV RUNTIME_VERBOSITY=1
 
-RUN /runtime/bin/install php${PHP_VERSION}-fpm libfcgi-bin \
-    && ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm \
+RUN /runtime/bin/install php${BUILD_VERSION}-fpm libfcgi-bin \
+    && ln -sf /usr/sbin/php-fpm${BUILD_VERSION} /usr/sbin/php-fpm \
     && rm /etc/php/current/fpm/pool.d/www.conf \
     && /runtime/bin/rchown /etc/php/current
 

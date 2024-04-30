@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  build-and-test-php:
+  build:
     runs-on: ubuntu-22.04
 
     steps:
@@ -55,4 +55,4 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ inputs.target }}-${{ inputs.version }}
           provenance: false
           build-args: |
-            PHP_VERSION=${{ inputs.version }}
+            BUILD_VERSION=${{ inputs.version }}
