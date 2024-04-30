@@ -23,7 +23,7 @@ To use an image as a base image and avoid potential breaking changes in your con
 image naming pattern in your `Dockerfile`:
 
 ```Dockerfile
-FROM ghcr.io/sitepilot/image:tag
+FROM ghcr.io/sitepilot/image:tag-branch
 ```
 
 For example, if you wish to customize the **PHP 8.3** with **FPM** & **NGINX** image:
