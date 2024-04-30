@@ -6,7 +6,7 @@ on:
       - '1.x'
     paths:
       - './src/php/**'
-      - './.github/workflows/php.yml'
+#      - './.github/workflows/php.yml'
   workflow_dispatch:
 
 jobs:
