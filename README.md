@@ -71,6 +71,6 @@ container image.
 | `RUNTIME_USER`       | `app`        | The container user name                                                    |
 | `RUNTIME_GROUP`      | `app`        | The container user group                                                   |
 | `RUNTIME_VERBOSITY`  | `2`          | The container verbosity (`2` = debug, `1` = info/warning, `0` = error)     |
-| `RUNTIME_WORKDIR`    | `/app`       | Path to the application home directory                                     |
+| `RUNTIME_HOME_DIR`   | `/app`       | Path to the application home directory                                     |
 | `RUNTIME_FILES_DIR`  | `/app/files` | Path to the application files directory                                    |
 | `RUNTIME_S6_ENABLED` | `false`      | Enable/disable [s6-overlay](https://github.com/just-containers/s6-overlay) |
