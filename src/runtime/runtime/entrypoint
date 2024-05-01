@@ -59,7 +59,7 @@ function generate_certs()
   fi
 }
 
-mkdir -p "$RUNTIME_FILES_DIR"
+mkdir -p "$RUNTIME_FILES_DIR" "$RUNTIME_LOGS_DIR"
 
 for FILE in /runtime/entrypoint.d/*.sh; do
   # shellcheck disable=SC1090
