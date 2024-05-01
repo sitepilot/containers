@@ -24,7 +24,8 @@ RUN /runtime/bin/install curl xz-utils ca-certificates \
     && chown $RUNTIME_UID:$RUNTIME_GID /run \
     && curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz -o - | tar Jxp -C / \
     && curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-$(uname -m).tar.xz -o - | tar Jxp -C / \
-    && curl -L https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-${TARGETARCH}-${DOCKERIZE_VERSION}.tar.gz -o - | tar xzf - -C /runtime/bin
+    && curl -L https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-${TARGETARCH}-${DOCKERIZE_VERSION}.tar.gz -o - | tar xzf - -C /runtime/bin \
+    && chown -R $RUNTIME_UID:$RUNTIME_GID /etc/s6-overlay/s6-rc.d/user
 
 COPY --chmod=755 ./runtime /
 
