@@ -1,15 +1,15 @@
-docRoot                   {{ .Env.RUNTIME_FILES_DIR }}/{{ .Env.OLS_PUBLIC_DIR }}
+docRoot                   {{ .Env.RUNTIME_FILES_DIR }}{{ default .Env.OLS_PUBLIC_DIR "" }}
 
 context /-/ping {
   type                    fcgi
   handler                 php-fpm
   addDefaultCharset       off
   rewrite  {
-    enable              0
-    inherit             0
+    enable                0
+    inherit               0
   }
 }
-s
+
 rewrite  {
   enable                  1
   autoLoadHtaccess        1

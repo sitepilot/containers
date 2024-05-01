@@ -91,8 +91,7 @@ USER root
 
 ENV RUNTIME_S6_ENABLED=true \
     NGINX_LOGS_DIR="$RUNTIME_HOME_DIR/logs" \
-    NGINX_CERTS_DIR="$RUNTIME_HOME_DIR/certs" \
-    NGINX_PUBLIC_DIR="/"
+    NGINX_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
 
 RUN /runtime/bin/install nginx \
     && rm /etc/nginx/sites-enabled/default \
@@ -115,8 +114,7 @@ USER root
 
 ENV RUNTIME_S6_ENABLED=true \
     OLS_LOGS_DIR="$RUNTIME_HOME_DIR/logs" \
-    OLS_CERTS_DIR="$RUNTIME_HOME_DIR/certs" \
-    OLS_PUBLIC_DIR="/"
+    OLS_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
 
 RUN curl http://rpms.litespeedtech.com/debian/lst_debian_repo.gpg -o /etc/apt/trusted.gpg.d/lst_debian_repo.gpg  \
     && curl http://rpms.litespeedtech.com/debian/lst_repo.gpg -o /etc/apt/trusted.gpg.d/lst_repo.gpg \
