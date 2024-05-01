@@ -2,4 +2,6 @@ date.timezone = {{ default .Env.PHP_DATE_TIMEZONE "UTC" }}
 memory_limit = {{ default .Env.PHP_MEMORY_LIMIT "256M" }}
 max_execution_time = {{ default .Env.PHP_MAX_EXECUTION_TIME "300" }}
 max_input_vars = {{ default .Env.PHP_MAX_INPUT_VARS "10000" }}
+error_log = {{ .Env.RUNTIME_LOGS_DIR }}/php.log
+mail.log = {{ .Env.RUNTIME_LOGS_DIR }}/mail.log
 sendmail_path=/usr/bin/msmtp -t

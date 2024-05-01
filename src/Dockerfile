@@ -12,10 +12,11 @@ ENV RUNTIME_UID=1000 \
     RUNTIME_GROUP=app \
     RUNTIME_HOME_DIR=/app \
     RUNTIME_FILES_DIR=/app/files \
+    RUNTIME_LOGS_DIR=/app/logs \
     RUNTIME_VERBOSITY=1 \
     RUNTIME_S6_ENABLED=false
 
-COPY --chmod=755 ./runtime/bin /runtime/bin
+COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 
 RUN /runtime/bin/install curl xz-utils ca-certificates \
     && groupadd -r -g ${RUNTIME_GID} ${RUNTIME_GROUP} \
@@ -25,7 +26,7 @@ RUN /runtime/bin/install curl xz-utils ca-certificates \
     && curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-$(uname -m).tar.xz -o - | tar Jxp -C / \
     && curl -L https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-${TARGETARCH}-${DOCKERIZE_VERSION}.tar.gz -o - | tar xzf - -C /runtime/bin
 
-COPY --chmod=755 ./runtime /runtime
+COPY --chmod=755 ./runtime /
 
 USER ${RUNTIME_UID}
 
@@ -90,7 +91,6 @@ FROM php-fpm AS php-nginx
 USER root
 
 ENV RUNTIME_S6_ENABLED=true \
-    NGINX_LOGS_DIR="$RUNTIME_HOME_DIR/logs" \
     NGINX_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
 
 RUN /runtime/bin/install nginx \
@@ -106,6 +106,9 @@ EXPOSE 80
 
 EXPOSE 443
 
+HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
+  CMD curl -f http://localhost/-/ping/ || exit 1
+
 # --------------- [PHP-OLS] --------------- #
 
 FROM php-fpm AS php-ols
@@ -113,7 +116,6 @@ FROM php-fpm AS php-ols
 USER root
 
 ENV RUNTIME_S6_ENABLED=true \
-    OLS_LOGS_DIR="$RUNTIME_HOME_DIR/logs" \
     OLS_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
 
 RUN curl http://rpms.litespeedtech.com/debian/lst_debian_repo.gpg -o /etc/apt/trusted.gpg.d/lst_debian_repo.gpg  \
@@ -130,3 +132,6 @@ USER $RUNTIME_UID
 EXPOSE 80
 
 EXPOSE 443
+
+HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
+  CMD curl -f http://localhost/-/ping/ || exit 1

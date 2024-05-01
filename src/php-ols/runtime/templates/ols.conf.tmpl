@@ -11,7 +11,7 @@ mime                      conf/mime.properties
 showVersionNumber         0
 useIpInProxyHeader        1
 
-errorlog {{ .Env.OLS_LOGS_DIR }}/error.log {
+errorlog {{ .Env.RUNTIME_LOGS_DIR }}/openlitespeed.log {
   logLevel                WARN
   debugLevel              0
   rollingSize             0
