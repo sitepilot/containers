@@ -27,7 +27,7 @@ RUN /runtime/bin/install curl xz-utils ca-certificates \
     && curl -L https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-${TARGETARCH}-${DOCKERIZE_VERSION}.tar.gz -o - | tar xzf - -C /runtime/bin \
     && chown -R $RUNTIME_UID:$RUNTIME_GID /etc/s6-overlay/s6-rc.d/user
 
-COPY --chmod=755 ./runtime /
+COPY --chown $RUNTIME_UID:$RUNTIME_GID ./runtime /
 
 USER ${RUNTIME_UID}
 
@@ -45,7 +45,8 @@ USER root
 
 ARG BUILD_VERSION=8.3
 
-ENV RUNTIME_VERBOSITY=0
+ENV RUNTIME_VERBOSITY=0 \
+    PHP_VERSION=${BUILD_VERSION}
 
 COPY ./php/runtime/packages /runtime/packages
 
@@ -56,7 +57,7 @@ RUN /runtime/bin/install gnupg2 software-properties-common less msmtp unzip \
     && /runtime/bin/install $(cat /runtime/packages/php-${BUILD_VERSION}.txt) \
     && /runtime/bin/rchown /etc/php/current
 
-COPY --chmod=755 ./php /
+COPY --chown $RUNTIME_UID:$RUNTIME_GID ./php /
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -77,7 +78,7 @@ RUN /runtime/bin/install php${BUILD_VERSION}-fpm libfcgi-bin \
     && rm /etc/php/current/fpm/pool.d/www.conf \
     && /runtime/bin/rchown /etc/php/current
 
-COPY --chmod=755 ./php-fpm /
+COPY --chown $RUNTIME_UID:$RUNTIME_GID ./php-fpm /
 
 USER $RUNTIME_UID
 
@@ -99,7 +100,7 @@ RUN /runtime/bin/install nginx \
     && /runtime/bin/rchown /etc/nginx /var/log/nginx /var/lib/nginx \
     && setcap "cap_net_bind_service=+ep" /usr/sbin/nginx
 
-COPY --chmod=755 ./php-nginx /
+COPY --chown $RUNTIME_UID:$RUNTIME_GID ./php-nginx /
 
 USER $RUNTIME_UID
 
@@ -126,7 +127,7 @@ RUN curl http://rpms.litespeedtech.com/debian/lst_debian_repo.gpg -o /etc/apt/tr
     && /runtime/bin/rchown /usr/local/lsws \
     && setcap "cap_net_bind_service=+ep" /usr/local/lsws/bin/openlitespeed
 
-COPY --chmod=755 ./php-ols /
+COPY --chown $RUNTIME_UID:$RUNTIME_GID ./php-ols /
 
 USER $RUNTIME_UID
 
