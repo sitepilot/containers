@@ -53,8 +53,8 @@ COPY ./php/runtime/packages /runtime/packages
 RUN /runtime/bin/install gnupg2 software-properties-common less msmtp unzip \
     && add-apt-repository ppa:ondrej/php \
     && mkdir -p /etc/php/current \
-    && ln -sf /etc/php/current /etc/php/${BUILD_VERSION} \
-    && /runtime/bin/install $(cat /runtime/packages/php-${BUILD_VERSION}.txt) \
+    && ln -sf /etc/php/current /etc/php/${PHP_VERSION} \
+    && /runtime/bin/install $(cat /runtime/packages/php-${PHP_VERSION}.txt) \
     && /runtime/bin/rchown /etc/php/current
 
 COPY --chown=$RUNTIME_UID:$RUNTIME_GID ./php /
@@ -73,8 +73,8 @@ USER root
 
 ENV RUNTIME_VERBOSITY=1
 
-RUN /runtime/bin/install php${BUILD_VERSION}-fpm libfcgi-bin \
-    && ln -sf /usr/sbin/php-fpm${BUILD_VERSION} /usr/sbin/php-fpm \
+RUN /runtime/bin/install php${PHP_VERSION}-fpm libfcgi-bin \
+    && ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm \
     && rm /etc/php/current/fpm/pool.d/www.conf \
     && /runtime/bin/rchown /etc/php/current
 
