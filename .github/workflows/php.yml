@@ -6,6 +6,7 @@ on:
       - '1.x'
     paths:
       - 'src/php/**'
+      - 'src/Dockerfile'
       - '.github/workflows/php.yml'
   workflow_dispatch:
 

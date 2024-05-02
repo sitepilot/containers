@@ -6,6 +6,7 @@ on:
       - '1.x'
     paths:
       - 'src/php-fpm/**'
+      - 'src/Dockerfile'
       - '.github/workflows/php-fpm.yml'
   workflow_dispatch:
 

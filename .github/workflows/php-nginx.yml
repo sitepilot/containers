@@ -6,6 +6,7 @@ on:
       - '1.x'
     paths:
       - 'src/php-nginx/**'
+      - 'src/Dockerfile'
       - '.github/workflows/php-nginx.yml'
   workflow_dispatch:
 

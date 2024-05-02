@@ -6,6 +6,7 @@ on:
       - '1.x'
     paths:
       - 'src/php-ols/**'
+      - 'src/Dockerfile'
       - '.github/workflows/php-ols.yml'
   workflow_dispatch:
 
