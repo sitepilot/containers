@@ -18,7 +18,7 @@ ENV RUNTIME_UID=1000 \
 
 COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 
-RUN /runtime/bin/install curl xz-utils ca-certificates \
+RUN /runtime/bin/install curl xz-utils ca-certificates nano \
     && groupadd -r -g ${RUNTIME_GID} ${RUNTIME_GROUP} \
     && useradd --no-log-init -r -s /usr/bin/bash -m -d ${RUNTIME_HOME_DIR} -u ${RUNTIME_UID} -g ${RUNTIME_GID} ${RUNTIME_USER} \
     && chown $RUNTIME_UID:$RUNTIME_GID /run \
