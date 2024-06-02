@@ -137,3 +137,13 @@ EXPOSE 443
 
 HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
   CMD curl -f http://localhost/-/ping/ || exit 1
+
+# --------------- [php-dev] --------------- #
+
+FROM php-nginx AS php-dev
+
+USER root
+
+RUN /runtime/bin/install mysql-client ssh-client rsync nano \
+
+USER $RUNTIME_UID

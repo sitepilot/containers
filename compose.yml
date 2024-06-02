@@ -54,3 +54,16 @@ services:
     build:
       context: ./src
       target: php-ols
+
+  php-dev:
+    image: ghcr.io/sitepilot/php-dev:8.3
+    profiles:
+      - donotstart
+    ports:
+      - :80
+      - :443
+    environment:
+      RUNTIME_VERBOSITY: 2
+    build:
+      context: ./src
+      target: php-dev
