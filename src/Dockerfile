@@ -144,6 +144,6 @@ FROM php-nginx AS php-dev
 
 USER root
 
-RUN /runtime/bin/install mysql-client ssh-client rsync nano \
+RUN /runtime/bin/install mysql-client ssh-client rsync nano
 
 USER $RUNTIME_UID
