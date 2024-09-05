@@ -38,7 +38,7 @@ jobs:
       - name: Build and publish image
         uses: docker/build-push-action@v5
         with:
-          context: ./src
+          context: ./containers/${{ inputs.target }}
           target: ${{ inputs.target }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
