@@ -1,15 +1,15 @@
 name: build
 
 on:
-  #push:
-  #  branches:
-  #    - 'refactor-workflows'
-  #  paths:
-  #    - 'containers/sidecar/**'
-  #    - '.github/workflows/sidecar.yml'
-  #    - '.github/workflows/build-v2.yml'
+  push:
+    branches:
+      - 'refactor-workflows'
+    paths:
+      - 'containers/sidecar/**'
+      - '.github/workflows/sidecar.yml'
+      - '.github/workflows/build-v2.yml'
   workflow_call:
-  #workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   sidecar:
