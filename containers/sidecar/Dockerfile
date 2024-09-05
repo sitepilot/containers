@@ -1,6 +1,6 @@
 ARG RUNTIME_VERSION=refactor-workflows
 
-FROM ghcr.io/sitepilot/runtime:${RUNTIME_VERSION}
+FROM ghcr.io/sitepilot/runtime-test:${RUNTIME_VERSION}
 
 USER root
 
