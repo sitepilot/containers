@@ -16,5 +16,5 @@ jobs:
     strategy:
       fail-fast: true
     with:
-      target: runtime-test
+      target: runtime
     secrets: inherit
