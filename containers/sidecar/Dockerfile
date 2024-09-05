@@ -1,4 +1,4 @@
-ARG RUNTIME_VERSION=1.x
+ARG RUNTIME_VERSION=refactor-workflows
 
 FROM ghcr.io/sitepilot/runtime:${RUNTIME_VERSION}
 
