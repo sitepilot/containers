@@ -1,0 +1,7 @@
+services:
+  runtime:
+    image: ghcr.io/sitepilot/runtime:build
+    environment:
+      RUNTIME_VERBOSITY: 2
+    build:
+      context: .

@@ -1,0 +1,19 @@
+name: build
+
+on:
+  push:
+    branches:
+      - 'refactor-workflows'
+    paths:
+      - 'containers/runtime/**'
+      - '.github/workflows/runtime.yml'
+  workflow_dispatch:
+
+jobs:
+  runtime:
+    uses: ./.github/workflows/build-v2.yml
+    strategy:
+      fail-fast: true
+    with:
+      target: runtime-test
+    secrets: inherit
