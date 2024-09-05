@@ -1,0 +1,9 @@
+services:
+  sidecar:
+    image: ghcr.io/sitepilot/sidecar:build
+    environment:
+      RUNTIME_VERBOSITY: 2
+    build:
+      context: .
+      args:
+        RUNTIME_VERSION: build

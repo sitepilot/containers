@@ -1,0 +1,21 @@
+name: build
+
+on:
+  #push:
+  #  branches:
+  #    - 'refactor-workflows'
+  #  paths:
+  #    - 'containers/sidecar/**'
+  #    - '.github/workflows/sidecar.yml'
+  #    - '.github/workflows/build-v2.yml'
+  workflow_call:
+  #workflow_dispatch:
+
+jobs:
+  sidecar:
+    uses: ./.github/workflows/build-v2.yml
+    strategy:
+      fail-fast: true
+    with:
+      target: sidecar
+    secrets: inherit

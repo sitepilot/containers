@@ -18,3 +18,8 @@ jobs:
     with:
       target: runtime
     secrets: inherit
+
+  sidecar:
+    uses: ./.github/workflows/sidecar.yml
+    needs: runtime
+    secrets: inherit
