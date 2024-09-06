@@ -149,3 +149,15 @@ RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg -
     && /runtime/bin/install mysql-client ssh-client rsync nano nodejs
 
 USER $RUNTIME_UID
+
+# --------------- [sidecar] --------------- #
+
+FROM runtime AS sidecar
+
+ENV RUNTIME_VERBOSITY=0
+
+USER root
+
+RUN /runtime/bin/install mysql-client ssh-client rsync restic
+
+USER $RUNTIME_UID

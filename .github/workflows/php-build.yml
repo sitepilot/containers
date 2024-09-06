@@ -1,4 +1,4 @@
-name: build
+name: php-build
 
 on:
   workflow_call:
@@ -6,9 +6,12 @@ on:
       target:
         required: true
         type: string
+      version:
+        required: true
+        type: string
 
 jobs:
-  build:
+  php-build:
     runs-on: ubuntu-22.04
 
     steps:
@@ -34,6 +37,12 @@ jobs:
         with:
           images: |
             ghcr.io/sitepilot/${{ inputs.target }}
+          flavor: |
+            latest=false
+          tags: |
+            type=ref,event=pr,prefix=${{ inputs.version }}-
+            type=ref,event=branch,prefix=${{ inputs.version }}-
+            type=raw,enable={{is_default_branch}},value=${{ inputs.version }}
 
       - name: Build and publish image
         uses: docker/build-push-action@v5
@@ -44,6 +53,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64, linux/arm64
-          cache-from: type=gha,scope=${{ inputs.target }}
-          cache-to: type=gha,mode=max,scope=${{ inputs.target }}
+          cache-from: type=gha,scope=${{ inputs.target }}-${{ inputs.version }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.target }}-${{ inputs.version }}
           provenance: false
+          build-args: |
+            BUILD_VERSION=${{ inputs.version }}

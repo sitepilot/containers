@@ -1,23 +1,23 @@
-name: php-fpm
+name: php-cli
 
 on:
   push:
     branches:
       - '1.x'
     paths:
-      - 'src/php-fpm/**'
+      - 'src/php/**'
       - 'src/Dockerfile'
-      - '.github/workflows/php-fpm.yml'
+      - 'php-cli.yml'
   workflow_dispatch:
 
 jobs:
-  php-fpm:
+  php-cli:
     uses: ./.github/workflows/php-build.yml
     strategy:
       matrix:
         php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
       fail-fast: true
     with:
-      target: php-fpm
+      target: php
       version: ${{ matrix.php }}
     secrets: inherit

@@ -1,6 +1,6 @@
 services:
   runtime:
-    image: ghcr.io/sitepilot/runtime:22.04
+    image: ghcr.io/sitepilot/runtime:build
     profiles:
       - donotstart
     environment:
@@ -10,7 +10,7 @@ services:
       target: runtime
 
   php:
-    image: ghcr.io/sitepilot/php:8.3
+    image: ghcr.io/sitepilot/php:build
     profiles:
       - donotstart
     environment:
@@ -20,7 +20,7 @@ services:
       target: php
 
   php-fpm:
-    image: ghcr.io/sitepilot/php-fpm:8.3
+    image: ghcr.io/sitepilot/php-fpm:build
     profiles:
       - donotstart
     environment:
@@ -30,7 +30,7 @@ services:
       target: php-fpm
 
   php-nginx:
-    image: ghcr.io/sitepilot/php-nginx:8.3
+    image: ghcr.io/sitepilot/php-nginx:build
     profiles:
       - donotstart
     ports:
@@ -43,7 +43,7 @@ services:
       target: php-nginx
 
   php-ols:
-    image: ghcr.io/sitepilot/php-ols:8.3
+    image: ghcr.io/sitepilot/php-ols:build
     profiles:
       - donotstart
     ports:
@@ -56,7 +56,7 @@ services:
       target: php-ols
 
   php-dev:
-    image: ghcr.io/sitepilot/php-dev:8.3
+    image: ghcr.io/sitepilot/php-dev:build
     profiles:
       - donotstart
     ports:
@@ -67,3 +67,11 @@ services:
     build:
       context: ./src
       target: php-dev
+
+  sidecar:
+    image: ghcr.io/sitepilot/sidecar:build
+    profiles:
+      - donotstart
+    build:
+      context: ./src
+      target: sidecar
