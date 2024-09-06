@@ -50,7 +50,7 @@ ENV RUNTIME_VERBOSITY=0 \
 
 COPY ./php/runtime/packages /runtime/packages
 
-RUN /runtime/bin/install gnupg2 software-properties-common less msmtp unzip \
+RUN /runtime/bin/install gnupg2 software-properties-common less msmtp unzip mysql-client \
     && add-apt-repository ppa:ondrej/php \
     && mkdir -p /etc/php/current \
     && ln -sf /etc/php/current /etc/php/${PHP_VERSION} \
@@ -146,7 +146,7 @@ USER root
 
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
-    && /runtime/bin/install mysql-client ssh-client rsync nano nodejs
+    && /runtime/bin/install ssh-client rsync nano nodejs
 
 USER $RUNTIME_UID
 
@@ -158,6 +158,6 @@ ENV RUNTIME_VERBOSITY=0
 
 USER root
 
-RUN /runtime/bin/install mysql-client ssh-client rsync restic
+RUN /runtime/bin/install ssh-client rsync restic
 
 USER $RUNTIME_UID
