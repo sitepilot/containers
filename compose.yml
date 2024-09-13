@@ -55,18 +55,19 @@ services:
       context: ./src
       target: php-ols
 
-  php-dev:
-    image: ghcr.io/sitepilot/php-dev:build
+  php-sshd:
+    image: ghcr.io/sitepilot/php-sshd:build
     profiles:
       - donotstart
     ports:
-      - :80
-      - :443
+      - 2222:2222
     environment:
       RUNTIME_VERBOSITY: 2
+      RUNTIME_USER: captain
+      RUNTIME_PASSWORD: secret
     build:
       context: ./src
-      target: php-dev
+      target: php-sshd
 
   sidecar:
     image: ghcr.io/sitepilot/sidecar:build

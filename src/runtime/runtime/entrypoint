@@ -66,6 +66,8 @@ for FILE in /runtime/entrypoint.d/*.sh; do
   source "$FILE"
 done
 
+touch "$RUNTIME_BOOTED_FILE"
+
 if to_bool "$RUNTIME_S6_ENABLED"; then
   export S6_KEEP_ENV=${S6_KEEP_ENV:-1}
   export S6_VERBOSITY=${S6_VERBOSITY:-$RUNTIME_VERBOSITY}

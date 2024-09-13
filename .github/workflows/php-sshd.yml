@@ -1,23 +1,23 @@
-name: php-dev
+name: php-sshd
 
 on:
   push:
     branches:
       - '1.x'
     paths:
-      - 'src/php-dev/**'
+      - '../../src/php-sshd/**'
       - 'src/Dockerfile'
-      - '.github/workflows/php-dev.yml'
+      - '.github/workflows/php-sshd.yml'
   workflow_dispatch:
 
 jobs:
-  php-dev:
+  php-sshd:
     uses: ./.github/workflows/php-build.yml
     strategy:
       matrix:
         php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
       fail-fast: true
     with:
-      target: php-dev
+      target: php-sshd
       version: ${{ matrix.php }}
     secrets: inherit

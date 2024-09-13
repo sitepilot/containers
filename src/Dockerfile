@@ -14,7 +14,8 @@ ENV RUNTIME_UID=1000 \
     RUNTIME_FILES_DIR=/app/files \
     RUNTIME_LOGS_DIR=/app/logs \
     RUNTIME_VERBOSITY=1 \
-    RUNTIME_S6_ENABLED=false
+    RUNTIME_S6_ENABLED=false \
+    RUNTIME_BOOTED_FILE=/runtime/booted
 
 COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 
@@ -138,19 +139,23 @@ EXPOSE 443
 HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
   CMD curl -f http://localhost/-/ping/ || exit 1
 
-# --------------- [php-dev] --------------- #
+# --------------- [php-sshd] --------------- #
 
-FROM php AS php-dev
+FROM php AS php-sshd
 
 USER root
 
-COPY --from=containerssh/agent /usr/bin/containerssh-agent /usr/bin/containerssh-agent
+ENV SSHD_PORT=2222
 
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
     && /runtime/bin/install nodejs openssh-server libc6 libstdc++6 ca-certificates tar bash curl wget
 
-USER $RUNTIME_UID
+RUN rm -rf /etc/update-motd.d/*
+
+COPY php-sshd /
+
+CMD ["/usr/sbin/sshd", "-D", "-e"]
 
 # --------------- [sidecar] --------------- #
 
