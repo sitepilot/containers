@@ -6,6 +6,9 @@ on:
       target:
         required: true
         type: string
+      tag:
+        required: true
+        type: string
       version:
         required: true
         type: string
@@ -36,13 +39,13 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/sitepilot/${{ inputs.target }}
+            ghcr.io/sitepilot/php
           flavor: |
             latest=false
           tags: |
-            type=ref,event=pr,prefix=${{ inputs.version }}-
-            type=ref,event=branch,prefix=${{ inputs.version }}-
-            type=raw,enable={{is_default_branch}},value=${{ inputs.version }}
+            type=ref,event=pr,prefix=${{ tag }}-
+            type=ref,event=branch,prefix=${{ tag }}-
+            type=raw,enable={{is_default_branch}},value=${{ tag }}
 
       - name: Build and publish image
         uses: docker/build-push-action@v5
@@ -53,8 +56,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64, linux/arm64
-          cache-from: type=gha,scope=${{ inputs.target }}-${{ inputs.version }}
-          cache-to: type=gha,mode=max,scope=${{ inputs.target }}-${{ inputs.version }}
+          cache-from: type=gha,scope=${{ inputs.tag }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.tag }}
           provenance: false
           build-args: |
             BUILD_VERSION=${{ inputs.version }}

@@ -3,11 +3,12 @@ name: php-cli
 on:
   push:
     branches:
-      - '1.x'
+      - '2.x'
     paths:
-      - 'src/php/**'
+      - 'src/php-*/**'
       - 'src/Dockerfile'
-      - 'php-cli.yml'
+      - '.github/workflows/php-cli.yml'
+      - '.github/workflows/build-php.yml'
   workflow_dispatch:
 
 jobs:
@@ -19,5 +20,6 @@ jobs:
       fail-fast: true
     with:
       target: php
+      tag: ${{ matrix.php }}
       version: ${{ matrix.php }}
     secrets: inherit

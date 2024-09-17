@@ -3,11 +3,12 @@ name: php-ols
 on:
   push:
     branches:
-      - '1.x'
+      - '2.x'
     paths:
-      - 'src/php-ols/**'
+      - 'src/php-*/**'
       - 'src/Dockerfile'
       - '.github/workflows/php-ols.yml'
+      - '.github/workflows/build-php.yml'
   workflow_dispatch:
 
 jobs:
@@ -19,5 +20,6 @@ jobs:
       fail-fast: true
     with:
       target: php-ols
+      tag: ${{ matrix.php }}-fpm-ols
       version: ${{ matrix.php }}
     secrets: inherit

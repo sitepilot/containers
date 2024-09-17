@@ -17,7 +17,7 @@ process_control_timeout = 30
 
 [app]
 ; Access from webserver container is via network, not socket file
-listen = [::]:9000
+listen = /run/php.sock
 
 ; Redirect logs to stdout - FPM closes /dev/std* on startup
 access.log = /proc/self/fd/1

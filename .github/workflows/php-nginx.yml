@@ -3,11 +3,12 @@ name: php-nginx
 on:
   push:
     branches:
-      - '1.x'
+      - '2.x'
     paths:
-      - 'src/php-nginx/**'
+      - 'src/php-*/**'
       - 'src/Dockerfile'
       - '.github/workflows/php-nginx.yml'
+      - '.github/workflows/build-php.yml'
   workflow_dispatch:
 
 jobs:
@@ -19,5 +20,6 @@ jobs:
       fail-fast: true
     with:
       target: php-nginx
+      tag: ${{ matrix.php }}-fpm-nginx
       version: ${{ matrix.php }}
     secrets: inherit

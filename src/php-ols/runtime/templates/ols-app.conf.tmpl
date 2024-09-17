@@ -1,4 +1,4 @@
-docRoot                   {{ .Env.RUNTIME_FILES_DIR }}{{ default .Env.OLS_PUBLIC_DIR "" }}
+docRoot                   {{ .Env.RUNTIME_FILES_DIR }}{{ default .Env.RUNTIME_PUBLIC_DIR "" }}
 
 context /-/ping {
   type                    fcgi

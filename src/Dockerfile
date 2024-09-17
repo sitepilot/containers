@@ -1,10 +1,10 @@
-# --------------- [RUNTIME] --------------- #
+# --------------- [runtime] --------------- #
 
-FROM ubuntu:22.04 as runtime
+FROM ubuntu:24.04 AS runtime
 
 ARG TARGETARCH
-ARG S6_VERSION=v3.1.6.2
-ARG DOCKERIZE_VERSION=v0.7.0
+ARG S6_VERSION=v3.2.0.0
+ARG DOCKERIZE_VERSION=v0.8.0
 
 ENV RUNTIME_UID=1000 \
     RUNTIME_GID=1000 \
@@ -14,87 +14,98 @@ ENV RUNTIME_UID=1000 \
     RUNTIME_FILES_DIR=/app/files \
     RUNTIME_LOGS_DIR=/app/logs \
     RUNTIME_VERBOSITY=1 \
-    RUNTIME_S6_ENABLED=false \
     RUNTIME_BOOTED_FILE=/runtime/booted
 
 COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 
-RUN /runtime/bin/install curl xz-utils ca-certificates nano \
-    && groupadd -r -g ${RUNTIME_GID} ${RUNTIME_GROUP} \
-    && useradd --no-log-init -r -s /usr/bin/bash -m -d ${RUNTIME_HOME_DIR} -u ${RUNTIME_UID} -g ${RUNTIME_GID} ${RUNTIME_USER} \
-    && chown $RUNTIME_UID:$RUNTIME_GID /run \
-    && curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-noarch.tar.xz -o - | tar Jxp -C / \
-    && curl -L https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-$(uname -m).tar.xz -o - | tar Jxp -C / \
-    && curl -L https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-${TARGETARCH}-${DOCKERIZE_VERSION}.tar.gz -o - | tar xzf - -C /runtime/bin \
-    && chown -R $RUNTIME_UID:$RUNTIME_GID /etc/s6-overlay/s6-rc.d/user
+RUN /runtime/bin/install  \
+      curl  \
+      nano \
+      ca-certificates  \
+      xz-utils  \
+      openssh-server  \
+      cron \
+      restic \
+    && userdel ubuntu \
+    && groupadd -r -g $RUNTIME_GID $RUNTIME_GROUP \
+    && useradd --no-log-init -r -s /usr/bin/bash -m -d $RUNTIME_HOME_DIR -u $RUNTIME_UID -g $RUNTIME_GID $RUNTIME_USER \
+    && curl -L https://github.com/just-containers/s6-overlay/releases/download/$S6_VERSION/s6-overlay-noarch.tar.xz -o - | tar Jxp -C / \
+    && curl -L https://github.com/just-containers/s6-overlay/releases/download/$S6_VERSION/s6-overlay-$(uname -m).tar.xz -o - | tar Jxp -C / \
+    && curl -L https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-${TARGETARCH}-$DOCKERIZE_VERSION.tar.gz -o - | tar xzf - -C /runtime/bin \
+    && /runtime/bin/rchown /run /etc/ssh /etc/s6-overlay/s6-rc.d/user \
+    && rm /etc/update-motd.d/* \
+    && chmod u+s /usr/sbin/cron
 
-COPY --chown=$RUNTIME_UID:$RUNTIME_GID ./runtime /
+RUN chown $RUNTIME_UID:$RUNTIME_GID /etc/passwd /etc/shadow
 
-USER ${RUNTIME_UID}
+COPY --chown=$RUNTIME_UID:$RUNTIME_GID runtime /
 
-RUN mkdir -p $RUNTIME_FILES_DIR
+USER $RUNTIME_UID
+
+RUN mkdir $RUNTIME_FILES_DIR
 
 WORKDIR $RUNTIME_FILES_DIR
 
 ENTRYPOINT ["/runtime/entrypoint"]
 
-# --------------- [php] --------------- #
+# --------------- [php-fpm] --------------- #
 
-FROM runtime as php
-
-USER root
+FROM runtime as php-cli
 
 ARG BUILD_VERSION=8.3
 
 ENV RUNTIME_VERBOSITY=0 \
     PHP_VERSION=${BUILD_VERSION}
 
-COPY ./php/runtime/packages /runtime/packages
-
-RUN /runtime/bin/install gnupg2 software-properties-common less msmtp unzip mysql-client \
-    && add-apt-repository ppa:ondrej/php \
-    && mkdir -p /etc/php/current \
-    && ln -sf /etc/php/current /etc/php/${PHP_VERSION} \
-    && /runtime/bin/install $(cat /runtime/packages/php-${PHP_VERSION}.txt) \
-    && /runtime/bin/rchown /etc/php/current
-
-COPY --chown=$RUNTIME_UID:$RUNTIME_GID ./php /
-
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-COPY --from=wordpress:cli-2 /usr/local/bin/wp /usr/local/bin/wp
-
-USER ${RUNTIME_UID}
-
-# --------------- [php-fpm] --------------- #
-
-FROM php AS php-fpm
-
 USER root
 
-ENV RUNTIME_VERBOSITY=1
+COPY php-cli/runtime/packages /runtime/packages
 
-RUN /runtime/bin/install php${PHP_VERSION}-fpm libfcgi-bin \
-    && ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm \
-    && rm /etc/php/current/fpm/pool.d/www.conf \
-    && /runtime/bin/rchown /etc/php/current
+RUN /runtime/bin/install \
+      gnupg2  \
+      software-properties-common \
+      less \
+      unzip \
+      mysql-client \
+    && add-apt-repository ppa:ondrej/php \
+    && /runtime/bin/install $(cat /runtime/packages/php-${PHP_VERSION}.txt) \
+    && /runtime/bin/rchown /etc/php
 
-COPY --chown=$RUNTIME_UID:$RUNTIME_GID ./php-fpm /
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=wordpress:cli-2 /usr/local/bin/wp /usr/local/bin/wp
+COPY --from=node:20-slim /usr/local/bin /usr/local/bin
+COPY --from=node:20-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
+
+COPY --chown=$RUNTIME_UID:$RUNTIME_GID php-cli /
 
 USER $RUNTIME_UID
 
-EXPOSE 9000
+# --------------- [php-fpm] --------------- #
 
-CMD ["php-fpm", "-F"]
+FROM php-cli as php-fpm
 
-# --------------- [PHP-NGINX] --------------- #
-
-FROM php-fpm AS php-nginx
+ENV RUNTIME_VERBOSITY=1
 
 USER root
 
-ENV RUNTIME_S6_ENABLED=true \
-    NGINX_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
+RUN /runtime/bin/install php${PHP_VERSION}-fpm \
+    && ln -sf /usr/sbin/php-fpm$PHP_VERSION /usr/sbin/php-fpm \
+    && rm /etc/php/$PHP_VERSION/fpm/pool.d/www.conf \
+    && /runtime/bin/rchown /etc/php
+
+COPY --chown=$RUNTIME_UID:$RUNTIME_GID php-fpm /
+
+USER $RUNTIME_UID
+
+CMD ["php-fpm", "-F"]
+
+# --------------- [php-nginx] --------------- #
+
+FROM php-fpm AS php-nginx
+
+ENV NGINX_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
+
+USER root
 
 RUN /runtime/bin/install nginx \
     && rm /etc/nginx/sites-enabled/default \
@@ -112,18 +123,15 @@ EXPOSE 443
 HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
   CMD curl -f http://localhost/-/ping/ || exit 1
 
-# --------------- [PHP-OLS] --------------- #
+# --------------- [php-ols] --------------- #
 
 FROM php-fpm AS php-ols
 
+ENV OLS_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
+
 USER root
 
-ENV RUNTIME_S6_ENABLED=true \
-    OLS_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
-
-RUN curl http://rpms.litespeedtech.com/debian/lst_debian_repo.gpg -o /etc/apt/trusted.gpg.d/lst_debian_repo.gpg  \
-    && curl http://rpms.litespeedtech.com/debian/lst_repo.gpg -o /etc/apt/trusted.gpg.d/lst_repo.gpg \
-    && echo "deb http://rpms.litespeedtech.com/debian/ jammy main" > /etc/apt/sources.list.d/lst_debian_repo.list \
+RUN curl -s https://repo.litespeed.sh | bash \
     && /runtime/bin/install openlitespeed \
     && /runtime/bin/rchown /usr/local/lsws \
     && setcap "cap_net_bind_service=+ep" /usr/local/lsws/bin/openlitespeed
@@ -138,33 +146,3 @@ EXPOSE 443
 
 HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
   CMD curl -f http://localhost/-/ping/ || exit 1
-
-# --------------- [php-sshd] --------------- #
-
-FROM php AS php-sshd
-
-USER root
-
-ENV SSHD_PORT=2222
-
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
-    && /runtime/bin/install nodejs openssh-server libc6 libstdc++6 ca-certificates tar bash curl wget
-
-RUN rm -rf /etc/update-motd.d/*
-
-COPY php-sshd /
-
-CMD ["/usr/sbin/sshd", "-D", "-e"]
-
-# --------------- [sidecar] --------------- #
-
-FROM runtime AS sidecar
-
-ENV RUNTIME_VERBOSITY=0
-
-USER root
-
-RUN /runtime/bin/install ssh-client rsync restic
-
-USER $RUNTIME_UID

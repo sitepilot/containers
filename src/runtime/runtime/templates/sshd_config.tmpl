@@ -10,7 +10,7 @@
 
 Include /etc/ssh/sshd_config.d/*.conf
 
-Port {{ default .Env.SSHD_PORT "2222" }}
+Port {{ default .Env.RUNTIME_SSH_PORT "2222" }}
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
@@ -36,8 +36,7 @@ PermitRootLogin no
 
 #PubkeyAuthentication yes
 
-# Expect .ssh/authorized_keys2 to be disregarded by default in future.
-#AuthorizedKeysFile     .ssh/authorized_keys .ssh/authorized_keys2
+AuthorizedKeysFile {{ default .Env.RUNTIME_SSH_KEYS_FILE ".ssh/authorized_keys" }}
 
 #AuthorizedPrincipalsFile none
 

@@ -12,7 +12,7 @@ server {
   ssl_certificate {{ .Env.NGINX_CERTS_DIR }}/ssl.crt;
   ssl_certificate_key {{ .Env.NGINX_CERTS_DIR }}/ssl.key;
 
-  root {{ .Env.RUNTIME_FILES_DIR }}{{ default .Env.NGINX_PUBLIC_DIR "" }};
+  root {{ .Env.RUNTIME_FILES_DIR }}{{ default .Env.RUNTIME_PUBLIC_DIR "" }};
 
   index index.php index.html index.htm;
 
@@ -40,7 +40,7 @@ server {
     include        fastcgi_params;
     fastcgi_param  SCRIPT_NAME     /-/ping;
     fastcgi_param  SCRIPT_FILENAME /-/ping;
-    fastcgi_pass   {{ default .Env.NGINX_FASTCGI_PASS "127.0.0.1:9000" }};
+    fastcgi_pass   unix:/run/php.sock;
   }
 
   include location.d/*.conf;
@@ -52,6 +52,6 @@ server {
   location ~ \.php$ {
     include snippets/fastcgi-php.conf;
     fastcgi_param HTTPS $fastcgi_https if_not_empty;
-    fastcgi_pass {{ default .Env.NGINX_FASTCGI_PASS "127.0.0.1:9000" }};
+    fastcgi_pass unix:/run/php.sock;
   }
 }

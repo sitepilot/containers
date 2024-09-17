@@ -68,7 +68,7 @@ done
 
 touch "$RUNTIME_BOOTED_FILE"
 
-if to_bool "$RUNTIME_S6_ENABLED"; then
+if [ -n "$( ls -A '/etc/s6-overlay/s6-rc.d/user/contents.d' )" ]; then
   export S6_KEEP_ENV=${S6_KEEP_ENV:-1}
   export S6_VERBOSITY=${S6_VERBOSITY:-$RUNTIME_VERBOSITY}
   export S6_BEHAVIOUR_IF_STAGE2_FAILS=${S6_BEHAVIOUR_IF_STAGE2_FAILS:-2}
