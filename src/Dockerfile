@@ -14,8 +14,7 @@ ENV RUNTIME_UID=1000 \
     RUNTIME_FILES_DIR=/app/files \
     RUNTIME_LOGS_DIR=/app/logs \
     RUNTIME_VERBOSITY=1 \
-    RUNTIME_BOOTED_FILE=/runtime/booted \
-    RUNTIME_CRONTABS_DIR=/app/.config/crontabs
+    RUNTIME_BOOTED_FILE=/runtime/booted
 
 COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 

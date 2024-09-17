@@ -6,6 +6,7 @@ on:
       - '2.x'
     paths:
       - 'src/php-*/**'
+      - 'src/runtime/**'
       - 'src/Dockerfile'
       - '.github/workflows/php-nginx.yml'
       - '.github/workflows/build-php.yml'
