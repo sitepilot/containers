@@ -51,10 +51,24 @@ function template()
   /runtime/bin/dockerize -template "/runtime/templates/$1":"$2"
 }
 
-function file()
-{
-  debug "Generating $2"
-  printf "# This file is managed by the container; any changes will be lost.\n%s\n" "$1" > "$2"
+function file_env() {
+	local var="$1"
+	local fileVar="${var}_FILE"
+	local def="${2:-}"
+
+	if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
+		throw "Both $var and $fileVar are set (but are exclusive)"
+	fi
+
+	local val="$def"
+	if [ "${!var:-}" ]; then
+		val="${!var}"
+	elif [ "${!fileVar:-}" ]; then
+		val="$(< "${!fileVar}")"
+	fi
+
+	export "$var"="$val"
+	unset "$fileVar"
 }
 
 function generate_certs()

@@ -3,6 +3,8 @@
 set -e
 set -u
 
+file_env "RUNTIME_SSH_AUTH_KEYS"
+
 if ${RUNTIME_SSH_ENABLED:-false} to_bool; then
   info "SSH Server: Enabled"
 
@@ -11,11 +13,6 @@ if ${RUNTIME_SSH_ENABLED:-false} to_bool; then
   mkdir -p /run/sshd ~/.ssh/etc/ssh
 
   ssh-keygen -A -f ~/.ssh > /dev/null
-
-  if [[ -n ${RUNTIME_SSH_AUTH_KEYS_FILE:-} ]]; then
-    RUNTIME_SSH_AUTH_KEYS="$(cat "$RUNTIME_SSH_AUTH_KEYS_FILE")"
-    export RUNTIME_SSH_AUTH_KEYS
-  fi
 
   template sshd_config.tmpl /etc/ssh/sshd_config
 
