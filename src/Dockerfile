@@ -12,10 +12,10 @@ ENV RUNTIME_UID=1000 \
     RUNTIME_GROUP=app \
     RUNTIME_HOME_DIR=/app \
     RUNTIME_FILES_DIR=/app/files \
-    RUNTIME_LOGS_DIR=/app/logs \
     RUNTIME_VERBOSITY=1 \
     RUNTIME_BOOTED_FILE=/runtime/booted \
-    RUNTIME_CRONTABS_DIR=/app/.config/crontabs
+    RUNTIME_CERTS_DIR=/app/.config/runtime/certs \
+    RUNTIME_CRONTABS_DIR=/app/.config/runtime/crontabs
 
 COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 
@@ -106,8 +106,6 @@ CMD ["php-fpm", "-F"]
 
 FROM php-fpm AS php-nginx
 
-ENV NGINX_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
-
 USER root
 
 RUN /runtime/bin/install nginx \
@@ -129,8 +127,6 @@ HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
 # --------------- [php-ols] --------------- #
 
 FROM php-fpm AS php-ols
-
-ENV OLS_CERTS_DIR="$RUNTIME_HOME_DIR/certs"
 
 USER root
 

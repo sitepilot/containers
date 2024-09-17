@@ -10,6 +10,8 @@ on:
       - 'src/Dockerfile'
       - '.github/workflows/php-nginx.yml'
       - '.github/workflows/build-php.yml'
+  schedule:
+    - cron: "25 3 * * *"
   workflow_dispatch:
 
 jobs:

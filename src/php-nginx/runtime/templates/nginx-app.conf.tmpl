@@ -9,8 +9,8 @@ server {
   ssl_protocols TLSv1.2 TLSv1.3;
   ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
 
-  ssl_certificate {{ .Env.NGINX_CERTS_DIR }}/ssl.crt;
-  ssl_certificate_key {{ .Env.NGINX_CERTS_DIR }}/ssl.key;
+  ssl_certificate {{ .Env.RUNTIME_CERTS_DIR }}/ssl.crt;
+  ssl_certificate_key {{ .Env.RUNTIME_CERTS_DIR }}/ssl.key;
 
   root {{ .Env.RUNTIME_FILES_DIR }}{{ default .Env.RUNTIME_PUBLIC_DIR "" }};
 

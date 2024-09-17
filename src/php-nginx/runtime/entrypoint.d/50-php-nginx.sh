@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-mkdir -p "$NGINX_CERTS_DIR"
+generate_certs
 
 template nginx.conf.tmpl /etc/nginx/nginx.conf
 template nginx-app.conf.tmpl /etc/nginx/sites-enabled/app.conf
-
-generate_certs "$NGINX_CERTS_DIR"

@@ -73,13 +73,14 @@ function file_env() {
 
 function generate_certs()
 {
-  if [ ! -f "$1"/ssl.key ]; then
-    debug "Generating self-signed SSL certificate to $1"
-    openssl req -x509 -subj "/C=NL/ST=Gelderland/L=Doetinchem/O=Sitepilot/CN=app.test" -nodes -newkey rsa:2048 -keyout "$1/ssl.key" -out "$1/ssl.crt" -days 365 &> /dev/null
+  if [ ! -f "$RUNTIME_CERTS_DIR"/ssl.key ]; then
+    mkdir -p "$RUNTIME_CERTS_DIR"
+    debug "Generating self-signed SSL certificate to $RUNTIME_CERTS_DIR"
+    openssl req -x509 -subj "/C=NL/ST=Gelderland/L=Doetinchem/O=Sitepilot/CN=app.test" -nodes -newkey rsa:2048 -keyout "$RUNTIME_CERTS_DIR/ssl.key" -out "$RUNTIME_CERTS_DIR/ssl.crt" -days 365 &> /dev/null
   fi
 }
 
-mkdir -p "$RUNTIME_FILES_DIR" "$RUNTIME_LOGS_DIR"
+mkdir -p "$RUNTIME_FILES_DIR"
 
 for FILE in /runtime/entrypoint.d/*.sh; do
   # shellcheck disable=SC1090
