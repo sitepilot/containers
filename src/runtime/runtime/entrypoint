@@ -15,33 +15,33 @@ function to_bool()
 function debug()
 {
   if [ "$RUNTIME_VERBOSITY" -ge 2 ]; then
-    echo "✳️ $1" >&2
+    echo "❇️ $1" > /dev/stdout
   fi
 }
 
 function info()
 {
   if [ "$RUNTIME_VERBOSITY" -ge 1 ]; then
-    echo "ℹ️ $1" >&2
+    echo "ℹ️ $1" > /dev/stdout
   fi
 }
 
 function warning()
 {
   if [ "$RUNTIME_VERBOSITY" -ge 1 ]; then
-    echo "⚠️ $1" >&2
+    echo "⚠️ $1" > /dev/stderr
   fi
 }
 
 function error()
 {
-    echo "‼️ $1" 1>&2
+    echo "🆘 $1" > /dev/stderr
 }
 
 function throw()
 {
   EXIT_CODE=${2:-1}
-  echo "‼️ $1" 1>&2
+  echo "🆘 $1" > /dev/stderr
   exit "$EXIT_CODE"
 }
 
@@ -49,6 +49,12 @@ function template()
 {
   debug "Generating $1 to $2"
   /runtime/bin/dockerize -template "/runtime/templates/$1":"$2"
+}
+
+function file()
+{
+  debug "Generating $2"
+  printf "# This file is managed by the container; any changes will be lost.\n%s\n" "$1" > "$2"
 }
 
 function generate_certs()

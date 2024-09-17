@@ -9,15 +9,13 @@ services:
       RUNTIME_VERBOSITY: 2
       RUNTIME_USER: captain
       # Generate with: openssl passwd -1
-      RUNTIME_PASSWORD_FILE: /run/secrets/password # secret
+      RUNTIME_PASSWORD_FILE: /files/password # secret
       RUNTIME_CRON_ENABLED: true
-      RUNTIME_CRONTAB_FILE: /run/secrets/crontab
+      RUNTIME_CRONTAB_FILE: /files/crontab
       RUNTIME_SSH_ENABLED: true
-      RUNTIME_SSH_KEYS_FILE: /run/secrets/authorized_keys
-    secrets:
-      - password
-      - crontab
-      - authorized_keys
+      RUNTIME_SSH_AUTH_KEYS_FILE: /files/authorized_keys
+    volumes:
+      - ./files:/files
     build:
       context: ./src
       target: runtime
@@ -63,11 +61,3 @@ services:
     build:
       context: ./src
       target: php-ols
-
-secrets:
-  password:
-    file: ./secrets/password
-  crontab:
-    file: ./secrets/crontab
-  authorized_keys:
-    file: ./secrets/authorized_keys

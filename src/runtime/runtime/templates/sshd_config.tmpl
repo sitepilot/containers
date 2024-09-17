@@ -1,3 +1,5 @@
+# This file is managed by the container; any changes will be lost.
+
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
 
@@ -36,7 +38,7 @@ PermitRootLogin no
 
 #PubkeyAuthentication yes
 
-AuthorizedKeysFile {{ default .Env.RUNTIME_SSH_KEYS_FILE ".ssh/authorized_keys" }}
+AuthorizedKeysFile .ssh/authorized_keys
 
 #AuthorizedPrincipalsFile none
 
