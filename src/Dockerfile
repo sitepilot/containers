@@ -14,7 +14,8 @@ ENV RUNTIME_UID=1000 \
     RUNTIME_FILES_DIR=/app/files \
     RUNTIME_LOGS_DIR=/app/logs \
     RUNTIME_VERBOSITY=1 \
-    RUNTIME_BOOTED_FILE=/runtime/booted
+    RUNTIME_BOOTED_FILE=/runtime/booted \
+    RUNTIME_CRONTABS_DIR=/app/.config/crontabs
 
 COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 
@@ -32,9 +33,11 @@ RUN /runtime/bin/install  \
     && curl -L https://github.com/just-containers/s6-overlay/releases/download/$S6_VERSION/s6-overlay-noarch.tar.xz -o - | tar Jxp -C / \
     && curl -L https://github.com/just-containers/s6-overlay/releases/download/$S6_VERSION/s6-overlay-$(uname -m).tar.xz -o - | tar Jxp -C / \
     && curl -L https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-${TARGETARCH}-$DOCKERIZE_VERSION.tar.gz -o - | tar xzf - -C /runtime/bin \
-    && /runtime/bin/rchown /run /etc/ssh /etc/s6-overlay/s6-rc.d/user /var/spool/cron/crontabs \
+    && /runtime/bin/rchown /run /etc/ssh /etc/s6-overlay/s6-rc.d/user \
     && rm /etc/update-motd.d/* \
-    && chmod u+s /usr/sbin/cron
+    && chmod u+s /usr/sbin/cron \
+    && rm -rf /var/spool/cron/crontabs \
+    && ln -sf $RUNTIME_CRONTABS_DIR /var/spool/cron/crontabs
 
 RUN chown $RUNTIME_UID:$RUNTIME_GID /etc/passwd /etc/shadow
 

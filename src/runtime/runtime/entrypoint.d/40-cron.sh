@@ -3,13 +3,10 @@
 set -e
 set -u
 
-file_env "RUNTIME_CRONTAB"
-
-if [ -n "$RUNTIME_CRONTAB" ]; then
+if ${RUNTIME_CRON_ENABLED:-false} to_bool; then
   info "Cron: Enabled"
   touch  /etc/s6-overlay/s6-rc.d/user/contents.d/cron
-  template crontab.tmpl /var/spool/cron/crontabs/"$RUNTIME_USER"
-  crontab /var/spool/cron/crontabs/"$RUNTIME_USER"
+  mkdir -p "$RUNTIME_CRONTABS_DIR"
 else
   info "Cron: Disabled"
 fi
