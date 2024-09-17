@@ -20,9 +20,9 @@ persist application data.
 | `/runtime/bin/rchown`              | Recursively change the owner and group of a folder (this allows services and scripts to access this folder while running the container with a non-root user) |
 | `/runtime/entrypoint.d`            | Each file in this folder is executed before the container command is executed                                                                                |
 | `/runtime/entrypoint.d/10-logo.sh` | Displays the brand logo                                                                                                                                      |
-| `/runtime/entrypoint.d/20-info.sh` | Modifies the user name and password                                                                                                                          |
-| `/runtime/entrypoint.d/40-cron.sh` | Enable and configure cron service                                                                                                                            |
-| `/runtime/entrypoint.d/40-ssh.sh`  | Enable and configure sshd service                                                                                                                            |
+| `/runtime/entrypoint.d/20-user.sh` | Configures the user name and password                                                                                                                        |
+| `/runtime/entrypoint.d/40-cron.sh` | Configures the cron service                                                                                                                                  |
+| `/runtime/entrypoint.d/40-sshd.sh` | Configures the sshd service                                                                                                                                  |
 | `/runtime/templates`               | Contains configuration templates                                                                                                                             |
 
 ## Environment

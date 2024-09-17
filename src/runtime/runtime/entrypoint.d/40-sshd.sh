@@ -3,10 +3,10 @@
 set -e
 set -u
 
-file_env "RUNTIME_SSH_AUTH_KEYS"
+file_env "RUNTIME_SSHD_AUTH_KEYS"
 
-if ${RUNTIME_SSH_ENABLED:-false} to_bool; then
-  info "SSH Server: Enabled"
+if ${RUNTIME_SSHD_ENABLED:-false} to_bool; then
+  info "SSHD: Enabled"
 
   touch  /etc/s6-overlay/s6-rc.d/user/contents.d/sshd
 
@@ -18,5 +18,5 @@ if ${RUNTIME_SSH_ENABLED:-false} to_bool; then
 
   template authorized_keys.tmpl ~/.ssh/authorized_keys
 else
-  info "SSH Server: Disabled"
+  info "SSHD: Disabled"
 fi

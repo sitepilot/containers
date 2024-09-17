@@ -12,7 +12,7 @@
 
 Include /etc/ssh/sshd_config.d/*.conf
 
-Port {{ default .Env.RUNTIME_SSH_PORT "2222" }}
+Port {{ default .Env.RUNTIME_SSHD_PORT "2222" }}
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::

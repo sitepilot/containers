@@ -7,12 +7,12 @@ services:
       - "2222:2222"
     environment:
       RUNTIME_VERBOSITY: 2
-      RUNTIME_SSH_ENABLED: true
+      RUNTIME_SSHD_ENABLED: true
       RUNTIME_CRON_ENABLED: true
       RUNTIME_USER: captain
       # Generate with: openssl passwd -1
       RUNTIME_PASSWORD_FILE: /files/password # secret
-      RUNTIME_SSH_AUTH_KEYS_FILE: /files/authorized_keys
+      RUNTIME_SSHD_AUTH_KEYS_FILE: /files/authorized_keys
     volumes:
       - ./files:/files
     build:
