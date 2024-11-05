@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-export RUNTIME_VERBOSITY=1
-
-source /runtime/entrypoint.d/10-logo.sh

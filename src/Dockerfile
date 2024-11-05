@@ -13,9 +13,8 @@ ENV RUNTIME_UID=1000 \
     RUNTIME_HOME_DIR=/app \
     RUNTIME_FILES_DIR=/app/files \
     RUNTIME_VERBOSITY=1 \
-    RUNTIME_BOOTED_FILE=/runtime/booted \
-    RUNTIME_CERTS_DIR=/app/.config/runtime/certs \
-    RUNTIME_CRONTABS_DIR=/app/.config/runtime/crontabs
+    RUNTIME_BOOTED_FILE=/tmp/booted \
+    RUNTIME_CERTS_DIR=/app/.config/runtime/certs
 
 COPY --chmod=755 ./runtime/runtime/bin /runtime/bin
 
@@ -24,22 +23,14 @@ RUN /runtime/bin/install  \
       nano \
       ca-certificates  \
       xz-utils  \
-      openssh-server  \
-      cron \
-      restic \
     && userdel ubuntu \
     && groupadd -r -g $RUNTIME_GID $RUNTIME_GROUP \
     && useradd --no-log-init -r -s /usr/bin/bash -m -d $RUNTIME_HOME_DIR -u $RUNTIME_UID -g $RUNTIME_GID $RUNTIME_USER \
     && curl -L https://github.com/just-containers/s6-overlay/releases/download/$S6_VERSION/s6-overlay-noarch.tar.xz -o - | tar Jxp -C / \
     && curl -L https://github.com/just-containers/s6-overlay/releases/download/$S6_VERSION/s6-overlay-$(uname -m).tar.xz -o - | tar Jxp -C / \
     && curl -L https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-${TARGETARCH}-$DOCKERIZE_VERSION.tar.gz -o - | tar xzf - -C /runtime/bin \
-    && /runtime/bin/rchown /run /etc/ssh /etc/s6-overlay/s6-rc.d/user \
-    && rm /etc/update-motd.d/* \
-    && chmod u+s /usr/sbin/cron \
-    && rm -rf /var/spool/cron/crontabs \
-    && ln -sf $RUNTIME_CRONTABS_DIR /var/spool/cron/crontabs
-
-RUN chown $RUNTIME_UID:$RUNTIME_GID /etc/passwd /etc/shadow
+    && /runtime/bin/rchown /run /etc/s6-overlay/s6-rc.d/user \
+    && chmod 777 $RUNTIME_HOME_DIR
 
 COPY --chown=$RUNTIME_UID:$RUNTIME_GID runtime /
 
@@ -72,7 +63,8 @@ RUN /runtime/bin/install \
       mysql-client \
     && add-apt-repository ppa:ondrej/php \
     && /runtime/bin/install $(cat /runtime/packages/php-${PHP_VERSION}.txt) \
-    && /runtime/bin/rchown /etc/php
+    && /runtime/bin/rchown /etc/php \
+    && chmod 777 /etc/php/${PHP_VERSION}/cli/conf.d
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY --from=wordpress:cli-2 /usr/local/bin/wp /usr/local/bin/wp

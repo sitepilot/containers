@@ -14,15 +14,11 @@ persist application data.
 |------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `/app/files`                       | Contains application files                                                                                                                                   |
 | `/app/.config/runtime/certs`       | Contains webserver self signed certificates                                                                                                                  |
-| `/app/.config/runtime/crontabs`    | Contains user crontab configurations                                                                                                                         |
 | `/runtime/bin`                     | Contains executable files used for building and running the container                                                                                        |
 | `/runtime/bin/install`             | Installs packages and clean up cache                                                                                                                         |
 | `/runtime/bin/rchown`              | Recursively change the owner and group of a folder (this allows services and scripts to access this folder while running the container with a non-root user) |
 | `/runtime/entrypoint.d`            | Each file in this folder is executed before the container command is executed                                                                                |
 | `/runtime/entrypoint.d/10-logo.sh` | Displays the brand logo                                                                                                                                      |
-| `/runtime/entrypoint.d/20-user.sh` | Configures the user name and password                                                                                                                        |
-| `/runtime/entrypoint.d/40-cron.sh` | Configures the cron service                                                                                                                                  |
-| `/runtime/entrypoint.d/40-sshd.sh` | Configures the sshd service                                                                                                                                  |
 | `/runtime/templates`               | Contains configuration templates                                                                                                                             |
 
 ## Environment
