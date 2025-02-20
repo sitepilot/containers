@@ -7,12 +7,6 @@ services:
       - "2222:2222"
     environment:
       RUNTIME_VERBOSITY: 2
-      RUNTIME_SSHD_ENABLED: true
-      RUNTIME_CRON_ENABLED: true
-      RUNTIME_USER: captain
-      # Generate with: openssl passwd -1
-      RUNTIME_PASSWORD_FILE: /files/password # secret
-      RUNTIME_SSHD_AUTH_KEYS_FILE: /files/authorized_keys
     volumes:
       - ./files:/files
     build:
@@ -20,7 +14,7 @@ services:
       target: runtime
 
   php-cli:
-    image: ghcr.io/sitepilot/php:8.3
+    image: ghcr.io/sitepilot/php:build
     profiles:
       - donotstart
     build:
@@ -28,7 +22,7 @@ services:
       target: php-cli
 
   php-fpm:
-    image: ghcr.io/sitepilot/php:8.3-fpm
+    image: ghcr.io/sitepilot/php:build-fpm
     profiles:
       - donotstart
     build:
@@ -36,7 +30,7 @@ services:
       target: php-fpm
 
   php-nginx:
-    image: ghcr.io/sitepilot/php:8.3-fpm-nginx
+    image: ghcr.io/sitepilot/php:build-fpm-nginx
     profiles:
       - donotstart
     ports:
@@ -49,7 +43,7 @@ services:
       target: php-nginx
 
   php-ols:
-    image: ghcr.io/sitepilot/php:8.3-fpm-ols
+    image: ghcr.io/sitepilot/php:build-fpm-ols
     profiles:
       - donotstart
     ports:
