@@ -113,9 +113,6 @@ EXPOSE 80
 
 EXPOSE 443
 
-HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
-  CMD curl -f http://localhost/-/ping/ || exit 1
-
 # --------------- [php-ols] --------------- #
 
 FROM php-fpm AS php-ols
@@ -134,6 +131,3 @@ USER $RUNTIME_UID
 EXPOSE 80
 
 EXPOSE 443
-
-HEALTHCHECK --interval=2s --timeout=1s --retries=5 \
-  CMD curl -f http://localhost/-/ping/ || exit 1
